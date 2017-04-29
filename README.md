@@ -6,3 +6,18 @@ using the [LeNet 5 neural network architecture](http://yann.lecun.com/exdb/publi
 LeNet 5 is implemented in Python using Google TensorFlow.
 
 
+### Installation
+
+Clone the repo:
+
+    git clone https://github.com/alexhagiopol/image_classifier
+    cd image_classifier
+
+Download the [German Traffic Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset) with annotations in a Python Pickle format that is easy to work with:
+        
+    wget https://www.dropbox.com/s/mwjjb67xbpj6rgp/traffic-signs-data.tar.gz
+    tar -xvzf traffic-signs-data.tar.gz
+    rm -rf traffic-signs-data.tar.gz
+
+
+    
