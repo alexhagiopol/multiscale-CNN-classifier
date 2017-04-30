@@ -6,9 +6,27 @@ using the [LeNet 5 neural network architecture](http://yann.lecun.com/exdb/publi
 LeNet 5 is implemented in Python using Google TensorFlow.
 
 
-### Installation
+### Installation on Ubuntu 16.04
+Install Python package dependencies using [my instructions.](https://github.com/alexhagiopol/deep_learning_packages) Then, activate the environment:
 
-Clone the repo:
+    source activate carnd-term1
+
+Optional but recommended: Install support for NVIDIA GPU acceleration with CUDA v8.0 and cuDNN v5.1:
+
+    wget https://www.dropbox.com/s/08ufs95pw94gu37/cuda-repo-ubuntu1604-8-0-local-ga2_8.0.61-1_amd64.deb
+    sudo dpkg -i cuda-repo-ubuntu1604-8-0-local-ga2_8.0.61-1_amd64.deb
+    sudo apt-get update
+    sudo apt-get install cuda
+    wget https://www.dropbox.com/s/9uah11bwtsx5fwl/cudnn-8.0-linux-x64-v5.1.tgz
+    tar -xvzf cudnn-8.0-linux-x64-v5.1.tgz
+    cd cuda/lib64
+    export LD_LIBRARY_PATH=`pwd`:$LD_LIBRARY_PATH
+    cd ..
+    export CUDA_HOME=`pwd`
+    sudo apt-get install libcupti-dev
+    pip install --ignore-installed --upgrade https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.1.0-cp35-cp35m-linux_x86_64.whl
+
+Clone the image_classifier repo:
 
     git clone https://github.com/alexhagiopol/image_classifier
     cd image_classifier
