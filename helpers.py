@@ -28,7 +28,7 @@ def display_random_samples_gray(x, y):
     for i in indices:
         index = int(i)
         image = x[index, :, :]
-        print(names['SignName'][y_train[index]])
+        print(names['SignName'][y[index]])
         fig = plt.figure(frameon=False)
         fig.set_size_inches(1, 1)
         plt.imshow(image, cmap='gray')
@@ -36,13 +36,16 @@ def display_random_samples_gray(x, y):
         plt.close()
 
 
-def evaluate(X_data, y_data, accuracy_operation, BATCH_SIZE, x, y, keep_prob):
+def evaluate(X_data, y_data, accuracy_operation, BATCH_SIZE, x, y, keep_prob=None):
     num_examples = len(X_data)
     total_accuracy = 0
     sess = tf.get_default_session()
     for offset in range(0, num_examples, BATCH_SIZE):
         batch_x, batch_y = X_data[offset:offset + BATCH_SIZE], y_data[offset:offset + BATCH_SIZE]
-        accuracy = sess.run(accuracy_operation, feed_dict={x: batch_x, y: batch_y, keep_prob: 1.0})
+        if keep_prob is not None:
+            accuracy = sess.run(accuracy_operation, feed_dict={x: batch_x, y: batch_y, keep_prob: 1.0})
+        else:
+            accuracy = sess.run(accuracy_operation, feed_dict={x: batch_x, y: batch_y})
         total_accuracy += (accuracy * len(batch_x))
     return total_accuracy / num_examples
 
@@ -181,7 +184,6 @@ def MultiScaleArch(x, dropout):
     fc1 = tf.matmul(concat, fc1_W) + fc1_b
     # Activation
     fc1 = tf.nn.tanh(fc1)
-
     # Dropout
     fc1 = tf.nn.dropout(fc1, dropout)
 
