@@ -1,11 +1,7 @@
 # Load pickled data
 import helpers
 import pickle
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
 import tensorflow as tf
-#from tensorflow.contrib.layers import flatten
 from sklearn.utils import shuffle
 
 # Load data
@@ -33,30 +29,18 @@ print("Number of testing examples =", n_test)
 print("Image data shape =", image_shape)
 print("Number of classes =", n_classes)
 
-# preprocess: Grayscale and Normalize
-print(X_train.shape)
-#X_train_norm[i,:,:,:] = tf.image.per_image_standardization(X_train[i,:,:,:]) for i in range(X_train.shape[0])
-#X_train_gray_norm = tf.image.rgb_to_grayscale(X_train_norm)
-#X_valid_norm = tf.image.per_image_standardization(X_valid)
-#X_valid_gray_norm = tf.image.rgb_to_grayscale(X_valid_norm)
-
-
-#y_train = tf.stack(y_train)
-
-#y_valid = tf.stack(y_valid)
-#print("input shape:")
-#print(X_train_gray_norm.shape)
-
 # Hyperparameters
 EPOCHS = 30
 BATCH_SIZE = 128
-rate = 0.0001
+rate = 0.0003
+dropout = 0.75
 
 # Set up TensorFlow input and output
 x = tf.placeholder(tf.float32, (None, 32, 32, 1))  # floats for normalized data
 y = tf.placeholder(tf.int32, (None))
 one_hot_y = tf.one_hot(y, 42)
-logits = helpers.Architecture(x)
+keep_prob = tf.placeholder(tf.float32)
+logits = helpers.MultiScaleArch(x, keep_prob)
 cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=one_hot_y, logits=logits)
 loss_operation = tf.reduce_mean(cross_entropy)
 optimizer = tf.train.AdamOptimizer(learning_rate=rate)
@@ -75,20 +59,21 @@ with tf.Session() as sess:
     print("Training...")
     print()
     for i in range(EPOCHS):
-        X_train, y_train = shuffle(X_train, y_train)
-
+        X_train, y_train = shuffle(X_train, y_train)  # shuffle dataset
+        # preprocessing step: convert to grayscale and normalize
         X_train_gray = tf.image.rgb_to_grayscale(X_train)
         X_train_gray_norm = tf.divide(tf.subtract(tf.to_float(X_train_gray), float(128)), float(128))
-        X_train_gray_norm = X_train_gray_norm.eval()
+        X_train_gray_norm = X_train_gray_norm.eval()  # convert back to normal array before feeding
         X_valid_gray = tf.image.rgb_to_grayscale(X_valid)
         X_valid_gray_norm = tf.divide(tf.subtract(tf.to_float(X_valid_gray), float(128)), float(128))
-        X_valid_gray_norm = X_valid_gray_norm.eval()
+        X_valid_gray_norm = X_valid_gray_norm.eval()  # convert back to normal array before feeding
+        # process each batch
         for offset in range(0, num_examples, BATCH_SIZE):
             end = offset + BATCH_SIZE
             batch_x, batch_y = X_train_gray_norm[offset:end], y_train[offset:end]
-            sess.run(training_operation, feed_dict={x: batch_x, y: batch_y})
+            sess.run(training_operation, feed_dict={x: batch_x, y: batch_y, keep_prob: dropout})  # execute session
 
-        validation_accuracy = helpers.evaluate(X_valid_gray_norm, y_valid, accuracy_operation, BATCH_SIZE, x, y)
+        validation_accuracy = helpers.evaluate(X_valid_gray_norm, y_valid, accuracy_operation, BATCH_SIZE, x, y, keep_prob)
         print("EPOCH {} ...".format(i + 1))
         print("Validation Accuracy = {:.3f}".format(validation_accuracy))
         print()
