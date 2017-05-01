@@ -30,7 +30,7 @@ print("Image data shape =", image_shape)
 print("Number of classes =", n_classes)
 
 # Hyperparameters
-EPOCHS = 30
+EPOCHS = 20
 BATCH_SIZE = 128
 rate = 0.0003
 dropout = 0.75
