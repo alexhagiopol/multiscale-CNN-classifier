@@ -1,13 +1,13 @@
 ## Image Classifier
 [![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
 
+#### Description
 This project implements a classifier for the [German Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset)
 using a convolutional neural network architecture created using concepts from [the LeNet 5 architecture](http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf) (LeCun, 1998),
 the [Multi-Scale Convolutional Network architecture](https://drive.google.com/open?id=0B_huqLwo5sS1RzVxMlFKV0RrSmc) (Sermanet, 2011), and [dropout](https://drive.google.com/open?id=0B_huqLwo5sS1QXd3S0NJY2pNeFk) (Srivastava, 2014). 
 LeNet 5 is implemented in Python using Google TensorFlow.
 
-
-### Installation on Ubuntu 16.04
+#### Installation on Ubuntu 16.04
 Install Python package dependencies using [my instructions.](https://github.com/alexhagiopol/deep_learning_packages) Then, activate the environment:
 
     source activate carnd-term1
@@ -38,9 +38,9 @@ Download the [German Traffic Dataset](http://benchmark.ini.rub.de/?section=gtsrb
     tar -xvzf traffic-signs-data.tar.gz
     rm -rf traffic-signs-data.tar.gz
     
-### Execution on Ubuntu 16.04
+#### Execution on Ubuntu 16.04
 
-### Technical Report
+## Technical Report
 
 #### Dataset Summary
 
