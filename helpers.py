@@ -48,16 +48,43 @@ def preprocessing(X_train):
 
 def augment(X_train, y_train):
     print("first shape", X_train.shape[0])
-    X_train_augmented = np.zeros((2 * X_train.shape[0], X_train.shape[1], X_train.shape[2]))
+    X_train_augmented = np.zeros((5 * X_train.shape[0], X_train.shape[1], X_train.shape[2]))
+    y_train_augmented = np.zeros((5 * y_train.shape[0]))
     X_train_augmented[0:X_train.shape[0], :, :] = X_train
+    y_train_augmented[0:y_train.shape[0]] = y_train
+    aug_index = X_train.shape[0]
     for i in range(X_train.shape[0]):
+        image = X_train[i]
+        label = y_train[i]
+        image_fx = cv2.flip(image, 0)
+        image_fy = cv2.flip(image, 1)
+        image_fxy = cv2.flip(image_fx, 1)
+        image = rnd_scale(rnd_trans(rnd_rot(rnd_shear(image))))
+        image_fx = rnd_scale(rnd_trans(rnd_rot(rnd_shear(image_fx))))
+        image_fy = rnd_scale(rnd_trans(rnd_rot(rnd_shear(image_fy))))
+        image_fxy = rnd_scale(rnd_trans(rnd_rot(rnd_shear(image_fxy))))
+        X_train_augmented[aug_index, :, :] = image
+        X_train_augmented[aug_index + 1, :, :] = image_fx
+        X_train_augmented[aug_index + 2, :, :] = image_fy
+        X_train_augmented[aug_index + 3, :, :] = image_fxy
+        y_train_augmented[aug_index] = y_train[i]
+        y_train_augmented[aug_index + 1] = y_train[i]
+        y_train_augmented[aug_index + 2] = y_train[i]
+        y_train_augmented[aug_index + 3] = y_train[i]
+        aug_index += 4
+
+        '''
         plt.figure(figsize=(5, 5))
-        random_scale(X_train[i])
+        show_image((2, 2, 1), "image", image)
+        show_image((2, 2, 2), "image", image_fx)
+        show_image((2, 2, 3), "image", image_fy)
+        show_image((2, 2, 4), "image", image_fxy)
         plt.show()
         plt.close()
+        '''
+    return [X_train_augmented, y_train_augmented]
 
-
-def random_translation(image):
+def rnd_trans(image):
     x = np.round(np.random.rand(1)[0] * 4 - 2)  # random pixel value between -2 and 2
     y = np.round(np.random.rand(1)[0] * 4 - 2)  # random pixel value between -2 and 2
     matrix = np.array([[1, 0, x], [0, 1, y]])
@@ -66,7 +93,7 @@ def random_translation(image):
     return new_image
 
 
-def random_rotation(image):
+def rnd_rot(image):
     angle = 30*np.random.rand(1)[0] - 15  # random angle between -15 and 15 degrees
     matrix = cv2.getRotationMatrix2D((16, 16), angle, 1)
     new_image = cv2.warpAffine(image, matrix, dsize=image.shape)
@@ -74,12 +101,21 @@ def random_rotation(image):
     return new_image
 
 
-def random_scale(image):
+def rnd_scale(image):
     scale = np.random.rand(1)[0]*0.2 + 0.9  # random scale betw 0.9 and 1.1
     matrix = cv2.getRotationMatrix2D((16, 16), 0, scale)
     new_image = cv2.warpAffine(image, matrix, dsize=image.shape)
-    show_image((1, 1, 1), "image", new_image)
-    #return new_image
+    #show_image((1, 1, 1), "image", new_image)
+    return new_image
+
+
+def rnd_shear(image):
+    cx = 0.5 * np.random.rand(1)[0] - 0.25  # random val betw -0.25 and 0.25
+    cy = 0.5 * np.random.rand(1)[0] - 0.25  # random val betw -0.25 and 0.25
+    matrix = np.array([[1, cx, 0], [cy, 1, 0]])
+    new_image = cv2.warpAffine(image, matrix, dsize=image.shape)
+    #show_image((1, 1, 1), "image", new_image)
+    return new_image
 
 
 def MultiScaleArch(x, dropout):
