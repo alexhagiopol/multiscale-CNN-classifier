@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from tensorflow.contrib.layers import flatten
 import tensorflow as tf
+import cv2
 
 
 def display_random_samples(x, y):
@@ -34,6 +34,23 @@ def display_random_samples_gray(x, y):
         plt.show()
         plt.close()
 
+def display(image, title = None):
+    fig = plt.figure(frameon=False)
+    fig.set_size_inches(5, 5)
+    if title is not None:
+        fig.suptitle(title)
+    plt.imshow(image, cmap='gray')
+    plt.show()
+    plt.close()
+
+def show_image(location, title, img):
+    plt.subplot(*location)
+    plt.title(title,fontsize=8)
+    plt.axis('off')
+    if len(img.shape) == 3:
+        plt.imshow(img)
+    else:
+        plt.imshow(img, cmap='gray')
 
 def evaluate(X_data, y_data, accuracy_operation, BATCH_SIZE, x, y, keep_prob=None):
     num_examples = len(X_data)
@@ -41,6 +58,7 @@ def evaluate(X_data, y_data, accuracy_operation, BATCH_SIZE, x, y, keep_prob=Non
     sess = tf.get_default_session()
     for offset in range(0, num_examples, BATCH_SIZE):
         batch_x, batch_y = X_data[offset:offset + BATCH_SIZE], y_data[offset:offset + BATCH_SIZE]
+        batch_x = tf.reshape(tf.stack(batch_x), (batch_x.shape[0], 32, 32, 1)).eval()
         if keep_prob is not None:
             accuracy = sess.run(accuracy_operation, feed_dict={x: batch_x, y: batch_y, keep_prob: 1.0})
         else:
@@ -93,13 +111,13 @@ def MultiScaleArch(x, dropout):
     # Activation. Output = 1x972
     conv32_active = tf.nn.tanh(conv32)
     # Flattening
-    conv32_active_flat = flatten(conv32_active)
+    conv32_active_flat = tf.contrib.layers.flatten(conv32_active)
 
     # From Layer 2: Input = 5x5x108. Output = 2700
-    conv2_flat = flatten(conv2)
+    conv2_flat = tf.contrib.layers.flatten(conv2)
 
     # From Layer 1: Input = 14x14x108. Output = 1x21168.
-    conv1_flat = flatten(conv1)
+    conv1_flat = tf.contrib.layers.flatten(conv1)
 
     # Combine from Layer 1 and from Layer 2. Output = 1x24840
     concat = tf.concat([conv32_active_flat, conv2_flat, conv1_flat], axis=1)
@@ -122,8 +140,22 @@ def MultiScaleArch(x, dropout):
 
     return logits
 
+'''
+def random_translate(im):
+    affine_matrix = 
 
 
+def perturb_projection(image):
+    # perturb projection
+    H = np.eye(3, 3) + 0.06*np.random.rand(3, 3) - 0.03
+    reprojected_image = cv2.warpPerspective(image, H, (image.shape[0], image.shape[1]))
+    display(reprojected_image, "warped")
+    return reprojected_image
 
 
+def perturb_blur(image):
+    blurred_image = cv2.GaussianBlur(image, (5,5), 2)
+    display(blurred_image, "blurred")
+    return blurred_image
+'''
 
