@@ -69,13 +69,10 @@ for i in range(X_train.shape[0]):
 X_valid_clahe = X_valid_gray
 for i in range(X_valid.shape[0]):
     X_valid_clahe[i, :, :] = clahe.apply(X_valid_clahe[i, :, :])
-# convert to tensors
-#X_train_clahe = tf.stack(X_train_clahe)
-#y_train = tf.stack(y_train)
-#X_valid_clahe = tf.stack(X_valid_clahe)
+
 # normalize image intensities
-X_train_clahe = (X_train_clahe / 255) * 2 - 1 #tf.divide(tf.subtract(tf.to_float(X_train_clahe), float(128)), float(128))
-X_valid_clahe = (X_valid_clahe / 255) * 2 - 1 #tf.divide(tf.subtract(tf.to_float(X_valid_clahe), float(128)), float(128))  # preprocessing step: normalize image intensity
+X_train_clahe = (X_train_clahe / 255) * 2 - 1  # normalize intensity
+X_valid_clahe = (X_valid_clahe / 255) * 2 - 1  # normalize intensity
 
 # training
 with tf.Session() as sess:
@@ -85,42 +82,15 @@ with tf.Session() as sess:
     print("Training...")
     print()
     for i in range(EPOCHS):
-        #X_train_clahe = X_train_clahe.eval()
-        #y_train = y_train.eval()
         X_train_clahe, y_train = skl.utils.shuffle(X_train_clahe, y_train)
-
-        '''
-        X_train, y_train = shuffle(X_train, y_train)  # shuffle dataset
-        X_train_gray = tf.image.rgb_to_grayscale(X_train)  # preprocessing step: convert to grayscale
-        X_train_clahe = X_train_gray[:,].eval()
-        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-        for j in range(X_train.shape[0]):
-            X_train_clahe[j, :, :] = clahe.apply(X_train_clahe[j, :, :])
-        X_train_gray_norm = tf.divide(tf.subtract(tf.to_float(X_train_clahe), float(128)), float(128))  # preprocessing step: normalize image intensity
-        X_train_gray_norm = X_train_gray_norm.eval()  # convert back to normal array before feeding
-
-        X_valid_gray = tf.image.rgb_to_grayscale(X_valid)  # preprocessing step: convert to grayscale
-        X_valid_clahe = X_valid_gray.eval()
-        for j in range(X_valid.shape[0]):
-            X_valid_clahe[j, :, :] = clahe.apply(X_valid_clahe[j, :, :])
-        X_valid_gray_norm = tf.divide(tf.subtract(tf.to_float(X_valid_clahe), float(128)), float(128))  # preprocessing step: normalize image intensity
-        X_valid_gray_norm = X_valid_gray_norm.eval()  # convert back to normal array before feeding
-        '''
         X_train_clahe = tf.stack(X_train_clahe).eval()  # convert back to normal array before feeding
         X_valid_clahe = tf.stack(X_valid_clahe).eval()  # convert back to normal array before feeding
-
-
         # process each batch
         for offset in range(0, num_examples, BATCH_SIZE):
             end = offset + BATCH_SIZE
-            #batch_x, batch_y = X_train_gray_norm[offset:end], y_train[offset:end]
             batch_x, batch_y = X_train_clahe[offset:end], y_train[offset:end]
-            #print("shape of batch_x", batch_x.shape)
             batch_x = tf.reshape(tf.stack(batch_x), (batch_x.shape[0], 32, 32, 1)).eval()
-            #print("shape of batch_x", batch_x.shape)
             sess.run(training_operation, feed_dict={x: batch_x, y: batch_y, keep_prob: dropout})  # execute session
-
-        #validation_accuracy = helpers.evaluate(X_valid_gray_norm, y_valid, accuracy_operation, BATCH_SIZE, x, y, keep_prob)
         validation_accuracy = helpers.evaluate(X_valid_clahe, y_valid, accuracy_operation, BATCH_SIZE, x, y, keep_prob)
         print("EPOCH {} ...".format(i + 1))
         print("Validation Accuracy = {:.3f}".format(validation_accuracy))
