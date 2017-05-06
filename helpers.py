@@ -5,43 +5,6 @@ import tensorflow as tf
 import cv2
 
 
-def display_random_samples(x, y):
-    names = pd.read_csv('signnames.csv')
-    print(names['ClassId'][1])
-    indices = np.random.rand(5) * x.shape[0]
-    for i in indices:
-        index = int(i)
-        image = x[index, :, :, :]
-        print(names['SignName'][y_train[index]])
-        fig = plt.figure(frameon=False)
-        fig.set_size_inches(1, 1)
-        plt.imshow(image)
-        plt.show()
-        plt.close()
-
-
-def display_random_samples_gray(x, y):
-    names = pd.read_csv('signnames.csv')
-    print(names['ClassId'][1])
-    indices = np.random.rand(5) * x.shape[0]
-    for i in indices:
-        index = int(i)
-        image = x[index, :, :]
-        print(names['SignName'][y[index]])
-        fig = plt.figure(frameon=False)
-        fig.set_size_inches(1, 1)
-        plt.imshow(image, cmap='gray')
-        plt.show()
-        plt.close()
-
-def display(image, title = None):
-    fig = plt.figure(frameon=False)
-    fig.set_size_inches(5, 5)
-    if title is not None:
-        fig.suptitle(title)
-    plt.imshow(image, cmap='gray')
-    plt.show()
-    plt.close()
 
 def show_image(location, title, img):
     plt.subplot(*location)
@@ -66,6 +29,20 @@ def evaluate(X_data, y_data, accuracy_operation, BATCH_SIZE, x, y, keep_prob=Non
         total_accuracy += (accuracy * len(batch_x))
     return total_accuracy / num_examples
 
+def preprocessing(X_train):
+    # image preprocessing
+    # grayscaling
+    X_train_gray = X_train[:, :, :, 0]
+    for i in range(X_train.shape[0]):
+        X_train_gray[i, :, :] = cv2.cvtColor(X_train[i, :, :], cv2.COLOR_RGB2GRAY)
+    # contrast limited adaptive histogram equalization
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    X_train_clahe = X_train_gray
+    for i in range(X_train.shape[0]):
+        X_train_clahe[i, :, :] = clahe.apply(X_train_clahe[i, :, :])
+    # normalize image intensities
+    X_train_clahe = (X_train_clahe / 255) * 2 - 1  # normalize intensity
+    return X_train_clahe
 
 def MultiScaleArch(x, dropout):
     """
@@ -139,23 +116,3 @@ def MultiScaleArch(x, dropout):
     logits = tf.matmul(fc1, fc2_W) + fc2_b
 
     return logits
-
-'''
-def random_translate(im):
-    affine_matrix = 
-
-
-def perturb_projection(image):
-    # perturb projection
-    H = np.eye(3, 3) + 0.06*np.random.rand(3, 3) - 0.03
-    reprojected_image = cv2.warpPerspective(image, H, (image.shape[0], image.shape[1]))
-    display(reprojected_image, "warped")
-    return reprojected_image
-
-
-def perturb_blur(image):
-    blurred_image = cv2.GaussianBlur(image, (5,5), 2)
-    display(blurred_image, "blurred")
-    return blurred_image
-'''
-

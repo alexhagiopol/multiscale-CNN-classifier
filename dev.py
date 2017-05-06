@@ -33,7 +33,7 @@ print("Number of classes =", n_classes)
 
 # Hyperparameters
 EPOCHS = 20
-BATCH_SIZE = 128
+BATCH_SIZE = 32
 rate = 0.0003
 dropout = 0.75
 
@@ -53,33 +53,15 @@ correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(one_hot_y, 1))
 accuracy_operation = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 saver = tf.train.Saver()
 
-# image preprocessing
-# grayscaling
-X_train_gray = X_train[:, :, :, 0]
-for i in range(X_train.shape[0]):
-    X_train_gray[i, :, :] = cv2.cvtColor(X_train[i, :, :], cv2.COLOR_RGB2GRAY)
-X_valid_gray = X_valid[:, :, :, 0]
-for i in range(X_valid.shape[0]):
-    X_valid_gray[i, :, :] = cv2.cvtColor(X_valid[i, :, :], cv2.COLOR_BGR2GRAY)
-# contrast limited adaptive histogram equalization
-clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
-X_train_clahe = X_train_gray
-for i in range(X_train.shape[0]):
-    X_train_clahe[i, :, :] = clahe.apply(X_train_clahe[i, :, :])
-X_valid_clahe = X_valid_gray
-for i in range(X_valid.shape[0]):
-    X_valid_clahe[i, :, :] = clahe.apply(X_valid_clahe[i, :, :])
-
-# normalize image intensities
-X_train_clahe = (X_train_clahe / 255) * 2 - 1  # normalize intensity
-X_valid_clahe = (X_valid_clahe / 255) * 2 - 1  # normalize intensity
+X_train_clahe = helpers.preprocessing(X_train)
+X_valid_clahe = helpers.preprocessing(X_valid)
 
 # training
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
     num_examples = X_train.shape[0]
 
-    print("Training...")
+    print("Training with batch size ", BATCH_SIZE)
     print()
     for i in range(EPOCHS):
         X_train_clahe, y_train = skl.utils.shuffle(X_train_clahe, y_train)
