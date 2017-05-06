@@ -48,30 +48,33 @@ def preprocessing(X_train):
 
 def augment(X_train, y_train):
     print("first shape", X_train.shape[0])
-    X_train_augmented = np.zeros((5 * X_train.shape[0], X_train.shape[1], X_train.shape[2]))
-    y_train_augmented = np.zeros((5 * y_train.shape[0]))
+    X_train_augmented = np.zeros((3 * X_train.shape[0], X_train.shape[1], X_train.shape[2]))
+    y_train_augmented = np.zeros((3 * y_train.shape[0]))
     X_train_augmented[0:X_train.shape[0], :, :] = X_train
     y_train_augmented[0:y_train.shape[0]] = y_train
     aug_index = X_train.shape[0]
     for i in range(X_train.shape[0]):
         image = X_train[i]
         label = y_train[i]
-        image_fx = cv2.flip(image, 0)
-        image_fy = cv2.flip(image, 1)
-        image_fxy = cv2.flip(image_fx, 1)
-        image = rnd_scale(rnd_trans(rnd_rot(rnd_shear(image))))
-        image_fx = rnd_scale(rnd_trans(rnd_rot(rnd_shear(image_fx))))
-        image_fy = rnd_scale(rnd_trans(rnd_rot(rnd_shear(image_fy))))
-        image_fxy = rnd_scale(rnd_trans(rnd_rot(rnd_shear(image_fxy))))
-        X_train_augmented[aug_index, :, :] = image
-        X_train_augmented[aug_index + 1, :, :] = image_fx
-        X_train_augmented[aug_index + 2, :, :] = image_fy
-        X_train_augmented[aug_index + 3, :, :] = image_fxy
+        #image_fx = cv2.flip(image, 0)
+        #image_fy = cv2.flip(image, 1)
+        #image_fxy = cv2.flip(image_fx, 1)
+        image1 = rnd_scale(rnd_trans(rnd_rot(rnd_shear(image))))
+        #image_fx = rnd_scale(rnd_trans(rnd_rot(rnd_shear(image_fx))))
+        #image_fy = rnd_scale(rnd_trans(rnd_rot(rnd_shear(image_fy))))
+        #image_fxy = rnd_scale(rnd_trans(rnd_rot(rnd_shear(image_fxy))))
+        X_train_augmented[aug_index, :, :] = image1
+        #X_train_augmented[aug_index + 1, :, :] = image_fx
+        #X_train_augmented[aug_index + 2, :, :] = image_fy
+        #X_train_augmented[aug_index + 3, :, :] = image_fxy
         y_train_augmented[aug_index] = y_train[i]
+        #y_train_augmented[aug_index + 1] = y_train[i]
+        #y_train_augmented[aug_index + 2] = y_train[i]
+        #y_train_augmented[aug_index + 3] = y_train[i]
+        image2 = rnd_scale(rnd_trans(rnd_rot(rnd_shear(image))))
+        X_train_augmented[aug_index + 1, :, :] = image2
         y_train_augmented[aug_index + 1] = y_train[i]
-        y_train_augmented[aug_index + 2] = y_train[i]
-        y_train_augmented[aug_index + 3] = y_train[i]
-        aug_index += 4
+        aug_index += 2
 
         '''
         plt.figure(figsize=(5, 5))
@@ -175,18 +178,21 @@ def MultiScaleArch(x, dropout):
     print("concatenated shape = ")
     print(concat.shape)
 
+    #Droput
+    concat = tf.nn.tanh(concat)
+    concat = tf.nn.dropout(concat, dropout)
     # Fully Connected. Input = 1x24840. Output = 1x100.
-    fc1_W = tf.Variable(tf.truncated_normal(shape=(24840, 100), mean=mu, stddev=sigma))
-    fc1_b = tf.Variable(tf.zeros(100))
-    fc1 = tf.matmul(concat, fc1_W) + fc1_b
+    fc1_W = tf.Variable(tf.truncated_normal(shape=(24840, 42), mean=mu, stddev=sigma))
+    fc1_b = tf.Variable(tf.zeros(42))
+    logits = tf.matmul(concat, fc1_W) + fc1_b
     # Activation
-    fc1 = tf.nn.tanh(fc1)
+    #fc1 = tf.nn.tanh(fc1)
     # Dropout
-    fc1 = tf.nn.dropout(fc1, dropout)
+    #fc1 = tf.nn.dropout(fc1, dropout)
 
     # Fully Connected. Input = 1x100. Output = 1x42.
-    fc2_W = tf.Variable(tf.truncated_normal(shape=(100, 42), mean=mu, stddev=sigma))
-    fc2_b = tf.Variable(tf.zeros(42))
-    logits = tf.matmul(fc1, fc2_W) + fc2_b
+    #fc2_W = tf.Variable(tf.truncated_normal(shape=(100, 42), mean=mu, stddev=sigma))
+    #fc2_b = tf.Variable(tf.zeros(42))
+    #logits = tf.matmul(fc1, fc2_W) + fc2_b
 
     return logits
