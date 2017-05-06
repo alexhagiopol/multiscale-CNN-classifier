@@ -56,6 +56,8 @@ saver = tf.train.Saver()
 X_train_clahe = helpers.preprocessing(X_train)
 X_valid_clahe = helpers.preprocessing(X_valid)
 
+helpers.augment(X_valid_clahe, y_train)
+
 # training
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())

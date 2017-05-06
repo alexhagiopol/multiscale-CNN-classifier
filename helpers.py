@@ -5,7 +5,6 @@ import tensorflow as tf
 import cv2
 
 
-
 def show_image(location, title, img):
     plt.subplot(*location)
     plt.title(title,fontsize=8)
@@ -14,6 +13,7 @@ def show_image(location, title, img):
         plt.imshow(img)
     else:
         plt.imshow(img, cmap='gray')
+
 
 def evaluate(X_data, y_data, accuracy_operation, BATCH_SIZE, x, y, keep_prob=None):
     num_examples = len(X_data)
@@ -29,6 +29,7 @@ def evaluate(X_data, y_data, accuracy_operation, BATCH_SIZE, x, y, keep_prob=Non
         total_accuracy += (accuracy * len(batch_x))
     return total_accuracy / num_examples
 
+
 def preprocessing(X_train):
     # image preprocessing
     # grayscaling
@@ -43,6 +44,43 @@ def preprocessing(X_train):
     # normalize image intensities
     X_train_clahe = (X_train_clahe / 255) * 2 - 1  # normalize intensity
     return X_train_clahe
+
+
+def augment(X_train, y_train):
+    print("first shape", X_train.shape[0])
+    X_train_augmented = np.zeros((2 * X_train.shape[0], X_train.shape[1], X_train.shape[2]))
+    X_train_augmented[0:X_train.shape[0], :, :] = X_train
+    for i in range(X_train.shape[0]):
+        plt.figure(figsize=(5, 5))
+        random_scale(X_train[i])
+        plt.show()
+        plt.close()
+
+
+def random_translation(image):
+    x = np.round(np.random.rand(1)[0] * 4 - 2)  # random pixel value between -2 and 2
+    y = np.round(np.random.rand(1)[0] * 4 - 2)  # random pixel value between -2 and 2
+    matrix = np.array([[1, 0, x], [0, 1, y]])
+    new_image = cv2.warpAffine(image, matrix, dsize=image.shape)
+    #show_image((1, 1, 1), "image", new_image)
+    return new_image
+
+
+def random_rotation(image):
+    angle = 30*np.random.rand(1)[0] - 15  # random angle between -15 and 15 degrees
+    matrix = cv2.getRotationMatrix2D((16, 16), angle, 1)
+    new_image = cv2.warpAffine(image, matrix, dsize=image.shape)
+    #show_image((1, 1, 1), "image", new_image)
+    return new_image
+
+
+def random_scale(image):
+    scale = np.random.rand(1)[0]*0.2 + 0.9  # random scale betw 0.9 and 1.1
+    matrix = cv2.getRotationMatrix2D((16, 16), 0, scale)
+    new_image = cv2.warpAffine(image, matrix, dsize=image.shape)
+    show_image((1, 1, 1), "image", new_image)
+    #return new_image
+
 
 def MultiScaleArch(x, dropout):
     """
