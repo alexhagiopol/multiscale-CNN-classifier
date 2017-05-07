@@ -32,19 +32,19 @@ print("Image data shape =", image_shape)
 print("Number of classes =", n_classes)
 
 # Hyperparameters
-EPOCHS = 20
-BATCH_SIZE = 4
-rate = 0.0003
-dropout = 0.75
+EPOCHS = 7
+BATCH_SIZE = 128
+rate = 0.0002
+dropout = 0.50
 
 # Set up TensorFlow input and output
 x = tf.placeholder(tf.float32, (None, 32, 32, 1))  # floats for normalized data
 y = tf.placeholder(tf.int32, (None))
 one_hot_y = tf.one_hot(y, 42)
 keep_prob = tf.placeholder(tf.float32)
-logits = helpers.MultiScaleArch(x, keep_prob)
+logits, regularizers = helpers.MultiScaleV2(x, keep_prob)
 cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=one_hot_y, logits=logits)
-loss_operation = tf.reduce_mean(cross_entropy)
+loss_operation = tf.reduce_mean(cross_entropy) + 1e-5 * regularizers
 optimizer = tf.train.AdamOptimizer(learning_rate=rate)
 training_operation = optimizer.minimize(loss_operation)
 
@@ -56,11 +56,13 @@ saver = tf.train.Saver()
 X_train_clahe = helpers.preprocessing(X_train)
 X_valid_clahe = helpers.preprocessing(X_valid)
 
-
-[X_train_clahe, y_train] = helpers.augment(X_train_clahe, y_train)
+#X_train_clahe = X_train_clahe[0:10]
+#y_train = y_train[0:10]
+#[X_train_clahe, y_train] = helpers.augment(X_train_clahe, y_train)
 
 
 # training
+max_accuracy = 0
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
     num_examples = X_train.shape[0]
@@ -76,11 +78,14 @@ with tf.Session() as sess:
             end = offset + BATCH_SIZE
             batch_x, batch_y = X_train_clahe[offset:end], y_train[offset:end]
             batch_x = tf.reshape(tf.stack(batch_x), (batch_x.shape[0], 32, 32, 1)).eval()
-            sess.run(training_operation, feed_dict={x: batch_x, y: batch_y, keep_prob: dropout})  # execute session
+            _, loss = sess.run([training_operation, loss_operation], feed_dict={x: batch_x, y: batch_y, keep_prob: dropout})  # execute session
+            #print("loss = ", loss)
         validation_accuracy = helpers.evaluate(X_valid_clahe, y_valid, accuracy_operation, BATCH_SIZE, x, y, keep_prob)
+        if validation_accuracy > max_accuracy:
+            max_accuracy = validation_accuracy
+            saver.save(sess, './best_model_save_file')
+            print("Model saved.")
         print("EPOCH {} ...".format(i + 1))
         print("Validation Accuracy = {:.3f}".format(validation_accuracy))
         print()
 
-    saver.save(sess, './lenet')
-    print("Model saved")
