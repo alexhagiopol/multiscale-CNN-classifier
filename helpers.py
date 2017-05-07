@@ -21,7 +21,6 @@ def evaluate(X_data, y_data, accuracy_operation, BATCH_SIZE, x, y, keep_prob=Non
     sess = tf.get_default_session()
     for offset in range(0, num_examples, BATCH_SIZE):
         batch_x, batch_y = X_data[offset:offset + BATCH_SIZE], y_data[offset:offset + BATCH_SIZE]
-        batch_x = tf.reshape(tf.stack(batch_x), (batch_x.shape[0], 32, 32, 1)).eval()
         if keep_prob is not None:
             accuracy = sess.run(accuracy_operation, feed_dict={x: batch_x, y: batch_y, keep_prob: 1.0})
         else:
@@ -35,7 +34,7 @@ def preprocessing(X_train):
     # grayscaling
     X_train_gray = X_train[:, :, :, 0]
     for i in range(X_train.shape[0]):
-        X_train_gray[i, :, :] = cv2.cvtColor(X_train[i, :, :], cv2.COLOR_RGB2GRAY)
+        X_train_gray[i, :, :] = cv2.cvtColor(X_train[i, :, :, :], cv2.COLOR_RGB2GRAY)
     # contrast limited adaptive histogram equalization
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
     X_train_clahe = X_train_gray
@@ -43,7 +42,7 @@ def preprocessing(X_train):
         X_train_clahe[i, :, :] = clahe.apply(X_train_clahe[i, :, :])
     # normalize image intensities
     X_train_clahe = (X_train_clahe / 255) * 2 - 1  # normalize intensity
-    return X_train_clahe
+    return X_train_clahe.reshape((X_train_clahe.shape[0], 32, 32, 1))
 
 
 def augment(X_train, y_train):
