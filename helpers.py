@@ -5,14 +5,19 @@ import tensorflow as tf
 import cv2
 
 
-def show_image(location, title, img):
+def show_image(location, title, img, width=None):
+    if width is not None:
+        plt.figure(figsize=(width, width))
     plt.subplot(*location)
-    plt.title(title,fontsize=8)
+    plt.title(title, fontsize=8)
     plt.axis('off')
     if len(img.shape) == 3:
         plt.imshow(img)
     else:
         plt.imshow(img, cmap='gray')
+    if width is not None:
+        plt.show()
+        plt.close()
 
 
 def evaluate(X_data, y_data, accuracy_operation, BATCH_SIZE, x, y, keep_prob=None):
@@ -37,54 +42,41 @@ def preprocessing(X_train):
         X_train_gray[i, :, :] = cv2.cvtColor(X_train[i, :, :, :], cv2.COLOR_RGB2GRAY)
     # contrast limited adaptive histogram equalization
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    X_train_clahe = X_train_gray
+    X_train_preproc = X_train_gray
     for i in range(X_train.shape[0]):
-        X_train_clahe[i, :, :] = clahe.apply(X_train_clahe[i, :, :])
+        X_train_preproc[i, :, :] = clahe.apply(X_train_preproc[i, :, :])
     # normalize image intensities
-    X_train_clahe = (X_train_clahe / 255) * 2 - 1  # normalize intensity
-    return X_train_clahe.reshape((X_train_clahe.shape[0], 32, 32, 1))
+    X_train_preproc = (X_train_preproc / 255) * 2 - 1  # normalize intensity
+    return X_train_preproc.reshape((X_train_preproc.shape[0], 32, 32, 1))
 
 
-def augment(X_train, y_train):
-    print("first shape", X_train.shape[0])
-    X_train_augmented = np.zeros((3 * X_train.shape[0], X_train.shape[1], X_train.shape[2]))
-    y_train_augmented = np.zeros((3 * y_train.shape[0]))
-    X_train_augmented[0:X_train.shape[0], :, :] = X_train
-    y_train_augmented[0:y_train.shape[0]] = y_train
-    aug_index = X_train.shape[0]
-    for i in range(X_train.shape[0]):
-        image = X_train[i]
-        label = y_train[i]
-        #image_fx = cv2.flip(image, 0)
-        #image_fy = cv2.flip(image, 1)
-        #image_fxy = cv2.flip(image_fx, 1)
-        image1 = rnd_scale(rnd_trans(rnd_rot(rnd_shear(image))))
-        #image_fx = rnd_scale(rnd_trans(rnd_rot(rnd_shear(image_fx))))
-        #image_fy = rnd_scale(rnd_trans(rnd_rot(rnd_shear(image_fy))))
-        #image_fxy = rnd_scale(rnd_trans(rnd_rot(rnd_shear(image_fxy))))
-        X_train_augmented[aug_index, :, :] = image1
-        #X_train_augmented[aug_index + 1, :, :] = image_fx
-        #X_train_augmented[aug_index + 2, :, :] = image_fy
-        #X_train_augmented[aug_index + 3, :, :] = image_fxy
-        y_train_augmented[aug_index] = y_train[i]
-        #y_train_augmented[aug_index + 1] = y_train[i]
-        #y_train_augmented[aug_index + 2] = y_train[i]
-        #y_train_augmented[aug_index + 3] = y_train[i]
-        image2 = rnd_scale(rnd_trans(rnd_rot(rnd_shear(image))))
-        X_train_augmented[aug_index + 1, :, :] = image2
-        y_train_augmented[aug_index + 1] = y_train[i]
-        aug_index += 2
+def augment(X, y, n_classes):
+    X_augmented = X
+    y_augmented = y
+    for sign_code in range(n_classes + 1):
+        image_list = list(np.where(y == sign_code)[0])
+        if len(image_list) < 1000:  # augment the classes that have few examples
+            for image_index in image_list:
+                # add 3 extra randomly perturbed images to dataset
+                image = X[image_index, :, :].reshape(32, 32)
+                transformed_image = rnd_scale(rnd_shear(rnd_rot(rnd_trans(image)))).reshape(1, 32, 32, 1)
+                X_augmented = np.concatenate((X_augmented, transformed_image))
+                y_augmented = np.concatenate((y_augmented, np.array([sign_code])))
+                transformed_image = rnd_scale(rnd_shear(rnd_rot(rnd_trans(image)))).reshape(1, 32, 32, 1)
+                X_augmented = np.concatenate((X_augmented, transformed_image))
+                y_augmented = np.concatenate((y_augmented, np.array([sign_code])))
+                transformed_image = rnd_scale(rnd_shear(rnd_rot(rnd_trans(image)))).reshape(1, 32, 32, 1)
+                X_augmented = np.concatenate((X_augmented, transformed_image))
+                y_augmented = np.concatenate((y_augmented, np.array([sign_code])))
+        else:
+            for image_index in image_list:
+                # add 1 extra randomly perturbed images to dataset
+                image = X[image_index, :, :].reshape(32, 32)
+                transformed_image = rnd_scale(rnd_shear(rnd_rot(rnd_trans(image)))).reshape(1, 32, 32, 1)
+                X_augmented = np.concatenate((X_augmented, transformed_image))
+                y_augmented = np.concatenate((y_augmented, np.array([sign_code])))
+    return X_augmented, y_augmented
 
-        '''
-        plt.figure(figsize=(5, 5))
-        show_image((2, 2, 1), "image", image)
-        show_image((2, 2, 2), "image", image_fx)
-        show_image((2, 2, 3), "image", image_fy)
-        show_image((2, 2, 4), "image", image_fxy)
-        plt.show()
-        plt.close()
-        '''
-    return [X_train_augmented, y_train_augmented]
 
 def rnd_trans(image):
     x = np.round(np.random.rand(1)[0] * 4 - 2)  # random pixel value between -2 and 2
