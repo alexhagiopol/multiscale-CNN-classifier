@@ -9,9 +9,9 @@ import sklearn as skl
 import numpy as np
 
 # Load preprocessed data
-training_file = 'traffic-signs-data/train_preproc_data.p'
-validation_file = 'traffic-signs-data/valid_preproc_data.p'
-testing_file = 'traffic-signs-data/test_preproc_data.p'
+training_file = 'train_preproc_data.p'
+validation_file = 'valid_preproc_data.p'
+testing_file = 'test_preproc_data.p'
 if not os.path.isfile(training_file) or not os.path.isfile(validation_file) or not os.path.isfile(testing_file):
     print("ERROR: Run preproc.py to create ", " ", training_file, " ", validation_file, " ", testing_file)
 else:
@@ -36,7 +36,7 @@ else:
     y = tf.placeholder(tf.int32, (None))
     one_hot_y = tf.one_hot(y, 42)
     keep_prob = tf.placeholder(tf.float32)
-    logits, regularizers = architecture.MultiScaleCNNArch(x, keep_prob)
+    logits, regularizers = architecture.MultiScaleCNNArchV2(x, keep_prob)
     cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=one_hot_y, logits=logits)
     loss_operation = tf.reduce_mean(cross_entropy) + 1e-5 * regularizers
     optimizer = tf.train.AdamOptimizer(learning_rate=rate)

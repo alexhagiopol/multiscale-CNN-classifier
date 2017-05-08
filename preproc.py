@@ -10,19 +10,16 @@ import random
 def preprocessing(X_train):
     # image preprocessing
     # grayscaling
-    import cv2
-    import numpy as np
-    os.system("taskset -p 0xff %d" % os.getpid())
     X_train_gray = X_train[:, :, :, 0]
     for i in range(X_train.shape[0]):
         X_train_gray[i, :, :] = cv2.cvtColor(X_train[i, :, :, :], cv2.COLOR_RGB2GRAY)
     # contrast limited adaptive histogram equalization
-    #clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
     X_train_preproc = X_train_gray
-    #for i in range(X_train.shape[0]):
-    #    X_train_preproc[i, :, :] = clahe.apply(X_train_preproc[i, :, :])
+    for i in range(X_train.shape[0]):
+        X_train_preproc[i, :, :] = clahe.apply(X_train_preproc[i, :, :])
     # normalize image intensities
-    X_train_preproc = (X_train_preproc / 255) - 0.5  # normalize intensity
+    X_train_preproc = 2.0*(X_train_preproc / 255) - 1.0  # normalize intensity
     return X_train_preproc.reshape((X_train_preproc.shape[0], 32, 32, 1))
 
 
@@ -166,7 +163,7 @@ if __name__ == "__main__":
     train_preproc = {'features': X_train_preproc, 'labels': y_train_preproc}
     valid_preproc = {'features': X_valid_preproc, 'labels': y_valid}
     test_preproc = {'features': X_test_preproc, 'labels': y_test}
-    pickle.dump(train_preproc, open("traffic-signs-data/train_preproc_data.p", "wb"))
-    pickle.dump(valid_preproc, open("traffic-signs-data/valid_preproc_data.p", "wb"))
-    pickle.dump(test_preproc, open("traffic-signs-data/test_preproc_data.p", "wb"))
+    pickle.dump(train_preproc, open("traffic-signs-data/train_preproc_clahe_data.p", "wb"))
+    pickle.dump(valid_preproc, open("traffic-signs-data/valid_preproc_clahe_data.p", "wb"))
+    pickle.dump(test_preproc, open("traffic-signs-data/test_preproc_clahe_data.p", "wb"))
     print("DONE")
