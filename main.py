@@ -43,6 +43,7 @@ else:
     training_operation = optimizer.minimize(loss_operation)
     # model evaluation
     correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(one_hot_y, 1))
+
     accuracy_operation = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
     saver = tf.train.Saver()
 
