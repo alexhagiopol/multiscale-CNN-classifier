@@ -37,6 +37,14 @@ Download the [German Traffic Dataset](http://benchmark.ini.rub.de/?section=gtsrb
     tar -xvzf traffic-signs-data.tar.gz
     rm -rf traffic-signs-data.tar.gz
     
+Perform preprocessing and data augmentation:
+
+    python preproc.py
+    
+Run the code to train on your machine:
+
+    python main.py
+    
 #### Execution on Ubuntu 16.04
 
 ## Technical Report
