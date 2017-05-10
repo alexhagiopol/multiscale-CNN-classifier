@@ -1,13 +1,12 @@
-## Image Classifier
-[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
+### Multi-Scale CNN Classifier 
+This project uses Google TensorFlow to implement a multi-scale convolutional neural network architecture created using concepts from [LeNet 5](http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf) (LeCun, 1998),
+the [Sermanet & LeCun's multi-scale CNN architecture](https://drive.google.com/open?id=0B_huqLwo5sS1RzVxMlFKV0RrSmc) (2011), and [the dropout concept](https://drive.google.com/open?id=0B_huqLwo5sS1QXd3S0NJY2pNeFk) (Srivastava, 2014). 
+We test the classifier's performance using the [German Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset).
 
-#### Description
-This project implements a classifier for the [German Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset)
-using a convolutional neural network architecture created using concepts from [the LeNet 5 architecture](http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf) (LeCun, 1998),
-the [Multi-Scale Convolutional Network architecture](https://drive.google.com/open?id=0B_huqLwo5sS1RzVxMlFKV0RrSmc) (Sermanet, 2011), and [dropout](https://drive.google.com/open?id=0B_huqLwo5sS1QXd3S0NJY2pNeFk) (Srivastava, 2014). 
+#### Installation
+This procedure was tested on Ubuntu 16.04 and Mac OS X 10.11.6 (El Capitan). GPU-accelerated training is supported on Ubuntu only.
 
-#### Installation on Ubuntu 16.04
-Install Python package dependencies using [my instructions.](https://github.com/alexhagiopol/deep_learning_packages) Then, activate the environment:
+Prerequisites: Install Python package dependencies using [my instructions.](https://github.com/alexhagiopol/deep_learning_packages) Then, activate the environment:
 
     source activate carnd-term1
 
@@ -36,18 +35,17 @@ Download the [German Traffic Dataset](http://benchmark.ini.rub.de/?section=gtsrb
     wget https://www.dropbox.com/s/mwjjb67xbpj6rgp/traffic-signs-data.tar.gz
     tar -xvzf traffic-signs-data.tar.gz
     rm -rf traffic-signs-data.tar.gz
-    
+
+#### Execution
 Perform preprocessing and data augmentation:
 
     python preproc.py
     
-Run the code to train on your machine:
+Run the code to train the model on your machine:
 
     python main.py
-    
-#### Execution on Ubuntu 16.04
 
-## Technical Report
+### Technical Report
 
 #### Dataset Summary
 
