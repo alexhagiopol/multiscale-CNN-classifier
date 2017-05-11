@@ -134,10 +134,34 @@ summarized graphically below:
 |                       |                                               |
 
 #### Training
+To train the model architecture above, I set up CUDA and cuDNN on my Ubuntu machine and
+trained using an NVIDIA GTX 980Ti. I used a batch size of 128, 0.0002 learning rate, 75% 
+dropout likelihood, and 10 epochs. After each epoch, I check if the accuracy achieved is the
+highest ever, and I save the model if so. This aloows me to keep the best weights configuration
+after each epoch. This training configuration takes about 15 minutes on my GPU.
 
 #### Solution Approach
 
+My highest validation and test accuracies are 94%. In spite of implementing data augmentation and other techniques suggested by the 
+literature, I was not able to achieve an accuracy above human performance of 98%. My solution approach was to first implement 
+the unmodified LeNet architecture with which I was not able to achieve above 85% accuracy. Next, I implemented Sermanet & LeCun's
+2011 paper on my own, and achieved 93% accuracy. I improved that architecture by adding dropoout which was developed 3 years after
+Sermanet and LeCun published their paper. I then searched the Internet for more optimized implementations to 
+push my accuracy higher. I saw Vivek Yadav's blog post where he suggests doubling the number of convolutional layers in addition to 
+adding regularization to the network. I implemented these changes and achieved 94% accuracy. The key insight from the literature on
+this topic is the multi-scale convolutional approach. The idea is to create a network that learns high-abstraction, mid-abstraction,
+and low-abstraction image features to perform classification. This is why the outputs of the first, second, and third convolutional 
+groups are flattened and concatenated before fully-connected layers. The final result will be based on an evaluation of all levels
+of feature abstraction.
+
+It's still a mystery to me why my accuracy is so low. I am still investigating.
+
 #### Acquiring New Images from Outside the Dataset
+
+I found five images of German traffic sings from outside the dataset on the Internet. I then resized these images to 32x32x3.
+Unfortunately, the model was only able to correctly predict the identity of 3 of 5 signs, giving it a 60% accuracy rate. 
+This accuracy is much lower than the accuracy on the test set of 94%. This indicates that the model has overfit the GTSRB 
+dataset and does not properly generalize to German traffic signs in general.
 
 #### Performance on New Images
 

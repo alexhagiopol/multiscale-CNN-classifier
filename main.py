@@ -43,10 +43,10 @@ else:
     print("Number of classes =", n_classes)
 
     # Hyperparameters
-    EPOCHS = 15
+    EPOCHS = 10
     BATCH_SIZE = 128
     rate = 0.0002
-    dropout = 0.50
+    dropout = 0.75
 
     # Set up TensorFlow input and output
     x = tf.placeholder(tf.float32, (None, 32, 32, 1))  # floats for normalized data
