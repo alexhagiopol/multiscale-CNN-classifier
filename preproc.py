@@ -78,7 +78,7 @@ def augment(X, y, n_classes):
         if len(image_list) < 500:  # augment the classes that have few examples
             print("Augmenting class with under 500 examples. Class #", sign_code, " of ", n_classes)
             for image_index in image_list:
-                # add 4 extra randomly perturbed images to dataset
+                # add 4 extra randomly perturbed images to dataset for each image in underrepresented class
                 image = X[image_index, :, :].reshape(32, 32)
 
                 transformed_image = rnd_scale(rnd_shear(rnd_rot(rnd_trans(rnd_blur(rnd_brightness(image)))))).reshape(1,32,32,1)
@@ -99,7 +99,7 @@ def augment(X, y, n_classes):
         elif len(image_list) < 1000:
             print("Augmenting class with under 1000 examples. Class #", sign_code, " of ", n_classes)
             for image_index in image_list:
-                # add 2 extra randomly perturbed images to dataset
+                # add 2 extra randomly perturbed images to dataset for each image in underrepresented class
                 image = X[image_index, :, :].reshape(32, 32)
 
                 transformed_image = rnd_scale(rnd_shear(rnd_rot(rnd_trans(rnd_blur(rnd_brightness(image)))))).reshape(1,32,32,1)

@@ -7,6 +7,7 @@ import tensorflow as tf
 import cv2
 import sklearn as skl
 import numpy as np
+import preproc
 
 # Load preprocessed data
 training_file = 'traffic-signs-data/train_preproc_clahe_data.p'
@@ -25,8 +26,21 @@ else:
     X_valid, y_valid = valid['features'], valid['labels']
     X_test, y_test = test['features'], test['labels']
 
+    n_train = X_train.shape[0]
+    n_validation = X_valid.shape[0]
+    n_test = X_test.shape[0]
+    image_shape = X_train.shape[1:]
+    n_classes = max(y_test) - min(y_test) + 1
+    print("Number of training examples =", n_train)
+    print("Number of validation examples =", n_validation)
+    print("Number of testing examples =", n_test)
+    print("Image data shape =", image_shape)
+    print("max y_valid = ", max(y_valid))
+    print("min y_valid = ", min(y_valid))
+    print("Number of classes =", n_classes)
+
     # Hyperparameters
-    EPOCHS = 15
+    EPOCHS = 100
     BATCH_SIZE = 128
     rate = 0.0002
     dropout = 0.50
@@ -34,7 +48,7 @@ else:
     # Set up TensorFlow input and output
     x = tf.placeholder(tf.float32, (None, 32, 32, 1))  # floats for normalized data
     y = tf.placeholder(tf.int32, (None))
-    one_hot_y = tf.one_hot(y, 42)
+    one_hot_y = tf.one_hot(y, n_classes)
     keep_prob = tf.placeholder(tf.float32)
     logits, regularizers = architecture.MultiScaleCNNArchV2(x, keep_prob)
     cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=one_hot_y, logits=logits)
