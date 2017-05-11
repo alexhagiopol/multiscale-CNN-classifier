@@ -132,7 +132,6 @@ summarized graphically below:
 | Fully Connected       |                           outputs 1x43        |
 |                       |                                               |  
 |                       |                                               |
-|:---------------------:|:---------------------------------------------:|
 
 #### Training
 
