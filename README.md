@@ -98,7 +98,43 @@ The provided implementations forgo augmentation which yielded an accuracy of 93%
 
 #### Model Architecture
 
-#### Model Training
+I implemented the multiscale architecture described in Sermanet and LeCun's paper with added regularization and dropout
+as described in Vivek Yadav's [blog post](https://chatbotslife.com/german-sign-classification-using-deep-learning-neural-networks-98-8-solution-d05656bf51ad).
+The architecture contains three "stacks" consisting of two convolutional layers, one ReLU layer, one max pooling layer, and one dropout layer.
+Stack one feeds into stack two which feeds into stack three. As described by Sermanet and LeCun, the output of stacks 1, 2, and 3
+are combined into a single, flattened vector which is then connected to a fully connected layer, a dropout layer, a second
+fully connected layer, and a second dropout layer in that order. Finally, reglarization is performed. The model architecture is 
+summarized graphically below:
+
+| Layer         		| Description    	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| Input         		| 32x32x1 grayscale image   					| 
+| Convolution 5x5     	| 1x1 stride, same padding, outputs 32x32x32 	|
+| Convolution 5x5     	| 1x1 stride, same padding, outputs 32x32x32 	|
+| ReLU					|												|
+| Max Pooling	      	| 2x2 stride,               outputs 16x16x32    |
+| Dropout         	    | 75% likelihood      				      		|
+| Convolution 5x5     	| 1x1 stride, same padding, outputs 16x16x64 	|
+| Convolution 5x5     	| 1x1 stride, same padding, outputs 16x16x64 	|
+| ReLU					|												|
+| Max Pooling	      	| 2x2 stride,               outputs 8x8x64      |
+| Dropout         	    | 75% likelihood      				      		|
+| Convolution 5x5     	| 1x1 stride, same padding, outputs 8x8x128 	|
+| Convolution 5x5     	| 1x1 stride, same padding, outputs 8x8x128 	|
+| ReLU					|												|
+| Max Pooling	      	| 2x2 stride,               outputs 4x4x128     |
+| Dropout				| 75% Likelihood            outputs 4x4x128   	|
+| Flatten + Concatenate | 	                        outputs 1x14336     |
+| Fully Connected		|                           outputs 1x1024      |
+| Dropout               |                           outputs 1x1024      |
+| Fully Connected       |                           outputs 1x1024      |
+| Dropout               |                           outputs 1x1024      |
+| Fully Connected       |                           outputs 1x43        |
+|                       |                                               |  
+|                       |                                               |
+|:---------------------:|:---------------------------------------------:|
+
+#### Training
 
 #### Solution Approach
 
