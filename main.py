@@ -10,10 +10,10 @@ import numpy as np
 import preproc
 
 # Load preprocessed data
-training_file = 'traffic-signs-data/train.p'
-validation_file = 'traffic-signs-data/valid.p'
-testing_file = 'traffic-signs-data/test.p'
-if False:#not os.path.isfile(training_file) or not os.path.isfile(validation_file) or not os.path.isfile(testing_file):
+training_file = 'traffic-signs-data/train_preproc_clahe_data.p'
+validation_file = 'traffic-signs-data/valid_preproc_clahe_data.p'
+testing_file = 'traffic-signs-data/test_preproc_clahe_data.p'
+if not os.path.isfile(training_file) or not os.path.isfile(validation_file) or not os.path.isfile(testing_file):
     print("ERROR: Run preproc.py to create ", " ", training_file, " ", validation_file, " ", testing_file)
 else:
     with open(training_file, mode='rb') as f:
@@ -26,9 +26,11 @@ else:
     X_valid, y_valid = valid['features'], valid['labels']
     X_test, y_test = test['features'], test['labels']
 
+    '''
     X_train = preproc.preprocessing(X_train)  # preprocessing
     X_valid = preproc.preprocessing(X_valid)  # preprocessing
     X_test = preproc.preprocessing(X_test)  # preprocessing
+    '''
     n_train = X_train.shape[0]
     n_validation = X_valid.shape[0]
     n_test = X_test.shape[0]
@@ -43,10 +45,10 @@ else:
     print("Number of classes =", n_classes)
 
     # Hyperparameters
-    EPOCHS = 10
+    EPOCHS = 100
     BATCH_SIZE = 128
     rate = 0.0002
-    dropout = 0.75
+    dropout = 0.50
 
     # Set up TensorFlow input and output
     x = tf.placeholder(tf.float32, (None, 32, 32, 1))  # floats for normalized data
