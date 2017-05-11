@@ -8,9 +8,9 @@ This procedure was tested on Ubuntu 16.04 and Mac OS X 10.11.6 (El Capitan). GPU
 
 Prerequisites: Install Python package dependencies using [my instructions.](https://github.com/alexhagiopol/deep_learning_packages) Then, activate the environment:
 
-    source activate carnd-term1
+    source activate deep-learning
 
-Optional but recommended: Install support for NVIDIA GPU acceleration with CUDA v8.0 and cuDNN v5.1:
+Optional, but recommended on Ubuntu: Install support for NVIDIA GPU acceleration with CUDA v8.0 and cuDNN v5.1:
 
     wget https://www.dropbox.com/s/08ufs95pw94gu37/cuda-repo-ubuntu1604-8-0-local-ga2_8.0.61-1_amd64.deb
     sudo dpkg -i cuda-repo-ubuntu1604-8-0-local-ga2_8.0.61-1_amd64.deb
@@ -41,13 +41,23 @@ Perform preprocessing and data augmentation:
 
     python preproc.py
     
-Run the code to train the model on your machine:
+Run the code to train and validate the model on your machine:
 
     python main.py
 
 ### Technical Report
+The implementation and reluts can be viewed simultaneously in the [Traffic_Sign_CLassifier.ipynb
+iPython notebook](https://github.com/alexhagiopol/multiscale_CNN_classifier/blob/master/Traffic_Sign_Classifier.ipynb)
+   
 
 #### Dataset Summary
+The GTSRB dataset contains XXXXXXX total images, each annotated with one of 43 sign classes. Each image is a cropped traffic sign
+from frames in a vehicle dashcam. The dataset contains images that often blurry, too dark, or captured from
+challenging view angles. For this project, the dataset is divided into 34799 training examples, 4410 validation 
+examples, and 12630 testing examples. A sample of raw images in the dataset is shown below:
+
+
+
 
 #### Exploratory Visualization
 
@@ -66,4 +76,3 @@ Run the code to train the model on your machine:
 #### Model Certainty
 
 
-    
