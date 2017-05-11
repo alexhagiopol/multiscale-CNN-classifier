@@ -56,8 +56,7 @@ from frames in a vehicle dashcam. The dataset contains images that often blurry,
 challenging view angles. For this project, the dataset is divided into 34799 training examples, 4410 validation 
 examples, and 12630 testing examples. A sample of raw images in the dataset is shown below:
 
-
-
+![raw_images](https://github.com/alexhagiopol/multiscale_CNN_classifier/blob/master/figures/raw.png)
 
 #### Exploratory Visualization
 
