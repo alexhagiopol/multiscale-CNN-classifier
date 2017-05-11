@@ -1,8 +1,9 @@
 ### Multi-Scale CNN Classifier 
 This project uses Google TensorFlow to implement a multi-scale convolutional neural network architecture created using concepts from [LeNet 5](http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf) (LeCun, 1998),
 the [Sermanet & LeCun's multi-scale CNN architecture](https://drive.google.com/open?id=0B_huqLwo5sS1RzVxMlFKV0RrSmc) (2011), and [the dropout concept](https://drive.google.com/open?id=0B_huqLwo5sS1QXd3S0NJY2pNeFk) (Srivastava, 2014). 
+
 The classifier's performance is tested using the [German Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset) on which it achieves 99.1% validation 
-accuracy and 97.2% test accuracy.
+accuracy and 97.2% test accuracy. These results are encouraging given that human performance on this dataset is 98.8% (Sermanet & LeCun, 2011).
 
 #### Installation
 This procedure was tested on Ubuntu 16.04 and Mac OS X 10.11.6 (El Capitan). GPU-accelerated training is supported on Ubuntu only.
