@@ -54,13 +54,13 @@ Run the code to train and validate the model on your machine:
     python main.py
 
 ### Technical Report
-The implementation and reluts can be viewed simultaneously in the [Traffic_Sign_CLassifier.ipynb
+The implementation and results can be viewed simultaneously in the [Traffic_Sign_CLassifier.ipynb
 iPython notebook](https://github.com/alexhagiopol/multiscale_CNN_classifier/blob/master/Traffic_Sign_Classifier.ipynb)
    
 
 #### Dataset Summary
 The GTSRB dataset contains 51839 total images, each annotated with one of 43 sign classes. Each image is a cropped traffic sign
-from frames in a vehicle dashcam. The dataset contains images that often blurry, too dark, or captured from
+from frames in a vehicle dashcam. The dataset contains images that are often blurry, too dark, or captured from
 challenging view angles. For this project, the dataset is divided into 34799 training examples, 4410 validation 
 examples, and 12630 testing examples. A sample of raw images in the dataset is shown below:
 
@@ -107,7 +107,7 @@ as described in Vivek Yadav's [blog post](https://chatbotslife.com/german-sign-c
 The architecture contains three "stacks" consisting of two convolutional layers, one ReLU layer, one max pooling layer, and one dropout layer.
 Stack one feeds into stack two which feeds into stack three. As described by Sermanet and LeCun, the output of stacks 1, 2, and 3
 are combined into a single, flattened vector which is then connected to a fully connected layer, a dropout layer, a second
-fully connected layer, and a second dropout layer in that order. Finally, reglarization is performed. The model architecture is 
+fully connected layer, and a second dropout layer in that order. Finally, regularization is performed. The model architecture is 
 summarized below:
 
 | Layer         		| Description    	        					| 
@@ -142,13 +142,13 @@ summarized below:
 To train the model architecture above, I set up CUDA and cuDNN on my Ubuntu machine as described and
 trained using an NVIDIA GTX 980Ti. I used a batch size of 128, 0.0002 learning rate, 50% 
 dropout likelihood, and 10 epochs. After each epoch, I check if the accuracy achieved is the
-highest ever, and I save the model if so. This aloows me to keep the best weights configuration
+highest ever, and I save the model if so. This allows me to keep the best weights configuration
 after each epoch. This training configuration takes about 1 hour on my GPU.
 
 #### Approach
 
 My highest validation accuracy is 99.1% and my test accuracy is 97.2%. These results are encouraging given that human performance is 98.8%.
-My solution approach was to first implement the unmodified LeNet architecture with which I was not able to achieve above 85% accuracy. 
+My solution's approach was to first implement the unmodified LeNet architecture with which I was not able to achieve above 85% accuracy. 
 Next, I implemented Sermanet & LeCun's 2011 paper on my own. I improved that architecture by adding dropoout which was developed 3 years after
 Sermanet and LeCun published their paper. I then searched the Internet for more optimized implementations to 
 push my accuracy higher. I saw Vivek Yadav's blog post where he suggests doubling the number of convolutional layers in addition to 
