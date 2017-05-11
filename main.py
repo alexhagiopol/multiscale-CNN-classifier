@@ -26,11 +26,6 @@ else:
     X_valid, y_valid = valid['features'], valid['labels']
     X_test, y_test = test['features'], test['labels']
 
-    '''
-    X_train = preproc.preprocessing(X_train)  # preprocessing
-    X_valid = preproc.preprocessing(X_valid)  # preprocessing
-    X_test = preproc.preprocessing(X_test)  # preprocessing
-    '''
     n_train = X_train.shape[0]
     n_validation = X_valid.shape[0]
     n_test = X_test.shape[0]

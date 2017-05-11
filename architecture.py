@@ -143,7 +143,7 @@ def MultiScaleCNNArchV2(x, dropout):
     layer16 = tf.nn.relu(layer16)
     # Layer 17: Dropout
     layer17 = tf.nn.dropout(layer16, dropout)
-    # Layer 18: Fully Connected: Input = 1x1024. Output = 1x43.
+    # Layer 18: Fully Connected: Input = 1x1024. Output = 1x43.  43 is the number of traffic sign classes
     fc18_W = tf.Variable(tf.truncated_normal(shape=(1024, 43), mean=mu, stddev=sigma))
     fc18_b = tf.Variable(tf.zeros(43))
     layer18 = tf.matmul(layer17, fc18_W) + fc18_b

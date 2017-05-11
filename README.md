@@ -1,7 +1,8 @@
 ### Multi-Scale CNN Classifier 
 This project uses Google TensorFlow to implement a multi-scale convolutional neural network architecture created using concepts from [LeNet 5](http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf) (LeCun, 1998),
 the [Sermanet & LeCun's multi-scale CNN architecture](https://drive.google.com/open?id=0B_huqLwo5sS1RzVxMlFKV0RrSmc) (2011), and [the dropout concept](https://drive.google.com/open?id=0B_huqLwo5sS1QXd3S0NJY2pNeFk) (Srivastava, 2014). 
-We test the classifier's performance using the [German Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset).
+We test the classifier's performance using the [German Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset) on which we achieve 99.1% validation 
+accuracy and 97.2% test accuracy.
 
 #### Installation
 This procedure was tested on Ubuntu 16.04 and Mac OS X 10.11.6 (El Capitan). GPU-accelerated training is supported on Ubuntu only.
@@ -92,10 +93,6 @@ augmented dataset and the class distribution of the augmented dataset.
 
 ![augmented_dist_train](https://github.com/alexhagiopol/multiscale_CNN_classifier/blob/master/figures/augmented_dist_train.png)
 
-Unfortunately, after over 60 hours of training and experimenting using an NVIDIA GTX 980Ti, I was not able to achieve higher 
-accuracy with augmented data than with unagumented data. This result baffles me; I am stuck at 94% accuracy at the present moment.
-The provided implementations forgo augmentation which yielded an accuracy of 93%.
-
 #### Model Architecture
 
 I implemented the multiscale architecture described in Sermanet and LeCun's paper with added regularization and dropout
@@ -104,7 +101,7 @@ The architecture contains three "stacks" consisting of two convolutional layers,
 Stack one feeds into stack two which feeds into stack three. As described by Sermanet and LeCun, the output of stacks 1, 2, and 3
 are combined into a single, flattened vector which is then connected to a fully connected layer, a dropout layer, a second
 fully connected layer, and a second dropout layer in that order. Finally, reglarization is performed. The model architecture is 
-summarized graphically below:
+summarized below:
 
 | Layer         		| Description    	        					| 
 |:---------------------:|:---------------------------------------------:| 
@@ -113,58 +110,71 @@ summarized graphically below:
 | Convolution 5x5     	| 1x1 stride, same padding, outputs 32x32x32 	|
 | ReLU					|												|
 | Max Pooling	      	| 2x2 stride,               outputs 16x16x32    |
-| Dropout         	    | 75% likelihood      				      		|
+| Dropout         	    | 50% likelihood      				      		|
 | Convolution 5x5     	| 1x1 stride, same padding, outputs 16x16x64 	|
 | Convolution 5x5     	| 1x1 stride, same padding, outputs 16x16x64 	|
 | ReLU					|												|
 | Max Pooling	      	| 2x2 stride,               outputs 8x8x64      |
-| Dropout         	    | 75% likelihood      				      		|
+| Dropout         	    | 50% likelihood      				      		|
 | Convolution 5x5     	| 1x1 stride, same padding, outputs 8x8x128 	|
 | Convolution 5x5     	| 1x1 stride, same padding, outputs 8x8x128 	|
 | ReLU					|												|
 | Max Pooling	      	| 2x2 stride,               outputs 4x4x128     |
-| Dropout				| 75% Likelihood            outputs 4x4x128   	|
+| Dropout				| 50% Likelihood            outputs 4x4x128   	|
 | Flatten + Concatenate | 	                        outputs 1x14336     |
 | Fully Connected		|                           outputs 1x1024      |
 | Dropout               |                           outputs 1x1024      |
 | Fully Connected       |                           outputs 1x1024      |
 | Dropout               |                           outputs 1x1024      |
 | Fully Connected       |                           outputs 1x43        |
-|                       |                                               |  
+| Regularization        |                                               |  
+|                       |                                               |
 |                       |                                               |
 
 #### Training
-To train the model architecture above, I set up CUDA and cuDNN on my Ubuntu machine and
-trained using an NVIDIA GTX 980Ti. I used a batch size of 128, 0.0002 learning rate, 75% 
+To train the model architecture above, I set up CUDA and cuDNN on my Ubuntu machine as described and
+trained using an NVIDIA GTX 980Ti. I used a batch size of 128, 0.0002 learning rate, 50% 
 dropout likelihood, and 10 epochs. After each epoch, I check if the accuracy achieved is the
 highest ever, and I save the model if so. This aloows me to keep the best weights configuration
-after each epoch. This training configuration takes about 15 minutes on my GPU.
+after each epoch. This training configuration takes about 1 hour on my GPU.
 
-#### Solution Approach
+#### Approach
 
-My highest validation and test accuracies are 94%. In spite of implementing data augmentation and other techniques suggested by the 
-literature, I was not able to achieve an accuracy above human performance of 98%. My solution approach was to first implement 
-the unmodified LeNet architecture with which I was not able to achieve above 85% accuracy. Next, I implemented Sermanet & LeCun's
-2011 paper on my own, and achieved 93% accuracy. I improved that architecture by adding dropoout which was developed 3 years after
+My highest validation accuracy is 99.1% and my test accuracy is 97.2%. These results are encouraging given that human performance is 98.8%.
+My solution approach was to first implement the unmodified LeNet architecture with which I was not able to achieve above 85% accuracy. 
+Next, I implemented Sermanet & LeCun's 2011 paper on my own. I improved that architecture by adding dropoout which was developed 3 years after
 Sermanet and LeCun published their paper. I then searched the Internet for more optimized implementations to 
 push my accuracy higher. I saw Vivek Yadav's blog post where he suggests doubling the number of convolutional layers in addition to 
-adding regularization to the network. I implemented these changes and achieved 94% accuracy. The key insight from the literature on
+adding regularization to the network. I implemented these changes and achieved 99.1% validation accuracy. The key insight from the literature on
 this topic is the multi-scale convolutional approach. The idea is to create a network that learns high-abstraction, mid-abstraction,
 and low-abstraction image features to perform classification. This is why the outputs of the first, second, and third convolutional 
 groups are flattened and concatenated before fully-connected layers. The final result will be based on an evaluation of all levels
 of feature abstraction.
 
-It's still a mystery to me why my accuracy is so low. I am still investigating.
-
 #### Acquiring New Images from Outside the Dataset
 
-I found five images of German traffic sings from outside the dataset on the Internet. I then resized these images to 32x32x3.
-Unfortunately, the model was only able to correctly predict the identity of 3 of 5 signs, giving it a 60% accuracy rate. 
-This accuracy is much lower than the accuracy on the test set of 94%. This indicates that the model has overfit the GTSRB 
-dataset and does not properly generalize to German traffic signs in general.
+I found five images of German traffic sings from outside the dataset on the Internet. I then resized these images to 32x32x3 and applied
+the same preprocessing I applied to the GTSRB dataset. Results of this procedure are below:
+
+![augmented_new_imgs](https://github.com/alexhagiopol/multiscale_CNN_classifier/blob/master/figures/augmented_new_imgs.png)
 
 #### Performance on New Images
 
+Unfortunately, the model was only able to correctly predict the identity of 3 of 5 signs, giving it a 60% accuracy rate. 
+This accuracy is much lower than the accuracy on the test set of 97%. This indicates that the model has overfit the GTSRB 
+dataset and does not properly generalize to German traffic signs in general. Future work includes investigating this overfitting
+and attempting to alleviate the issue with perhaps better data augmentation. One issue I see with the differences between
+the new images and the dataset images is that the new images represent the traffic signs with higher clarity and less blur than the
+GTSRB dataset. Perhaps additional preprocessing on new images could help achieve better results.
+
 #### Model Certainty
+
+Below we show the softmax probabilities for each new image. The figure shows that the model is extremely overconfident: it is
+100% certain of its wrong inferences. Future work includes researching how to overcome such issues with overconfidence and 
+not generalizing to images from outside the source dataset.
+
+![new_imgs_perf](https://github.com/alexhagiopol/multiscale_CNN_classifier/blob/master/figures/new_imgs_perf.png)
+
+
 
 
