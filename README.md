@@ -172,7 +172,7 @@ This accuracy is much lower than the accuracy on the test set of 97%. This indic
 dataset and does not properly generalize to German traffic signs in general. Future work includes investigating this overfitting
 and attempting to alleviate the issue with perhaps better data augmentation. One issue I see with the differences between
 the new images and the dataset images is that the new images represent the traffic signs with higher clarity and less blur than the
-GTSRB dataset. Perhaps additional preprocessing on new images could help achieve better results.
+GTSRB dataset. Perhaps additional preprocessing on new images could help achieve better results. It's important to note that the paper by Sermanet and LeCun makes no mention of testing images from outside the GTSRB dataset; it's likely that their implementaion faces similar issues with overfitting.
 
 #### Model Certainty
 
