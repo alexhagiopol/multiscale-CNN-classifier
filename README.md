@@ -141,7 +141,7 @@ summarized below:
 #### Training
 To train the model architecture above, I set up CUDA and cuDNN on my Ubuntu machine as described and
 trained using an NVIDIA GTX 980Ti. I used a batch size of 128, 0.0002 learning rate, 50% 
-dropout likelihood, and 10 epochs. After each epoch, I check if the accuracy achieved is the
+dropout likelihood, and 100 epochs. After each epoch, I check if the accuracy achieved is the
 highest ever, and I save the model if so. This allows me to keep the best weights configuration
 after each epoch. This training configuration takes about 1 hour on my GPU.
 
