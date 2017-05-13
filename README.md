@@ -1,11 +1,15 @@
 ## Multi-Scale CNN Classifier 
 
-#### Introduction
-This project uses Google TensorFlow to implement a multi-scale convolutional neural network architecture created using concepts from [LeNet 5](http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf) (LeCun, 1998),
-the [Sermanet & LeCun's multi-scale CNN architecture](https://drive.google.com/open?id=0B_huqLwo5sS1RzVxMlFKV0RrSmc) (2011), and [the dropout method](https://drive.google.com/open?id=0B_huqLwo5sS1QXd3S0NJY2pNeFk) (Srivastava, 2014). 
+![intro_img](https://github.com/alexhagiopol/multiscale_CNN_classifier/blob/master/figures/intro_img.png)
 
-The classifier's performance is tested using the [German Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset) on which it achieves 99.1% validation 
-accuracy and 97.2% test accuracy. These results are encouraging given that human performance on this dataset is 98.8% (Sermanet & LeCun, 2011).
+#### Abstract
+This project uses Google TensorFlow to implement a convolutional neural network architecture created using concepts from [the LeNet 5 architecture](http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf) (LeCun, 1998),
+the [multi-scale network architecture](https://drive.google.com/open?id=0B_huqLwo5sS1RzVxMlFKV0RrSmc) (Sermanet, 2011), [the dropout method](https://drive.google.com/open?id=0B_huqLwo5sS1QXd3S0NJY2pNeFk) (Srivastava, 2014), and [regularization](http://www.deeplearningbook.org/contents/regularization.html). 
+The classifier's performance is tested using the [German Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset) 
+which contains over 51000 image patches from automobile dashcams, each annotated with one of 43 traffic sign classes. This implementation achieves 99.1% validation 
+accuracy and 97.2% test accuracy on this dataset. These results are encouraging given that human performance on this dataset is 98.8% (Sermanet & LeCun, 2011). However, overfitting the
+GTSRB dataset remains a challenge when attempting to generalize to *any* image of German traffic signs captured by *any* camera. Future work
+includes further research into generalization including further preprocessing to make reliable inferences on images from any input source.
 
 #### Installation
 This procedure was tested on Ubuntu 16.04 and Mac OS X 10.11.6 (El Capitan). GPU-accelerated training is supported on Ubuntu only.
@@ -50,13 +54,13 @@ Run the code to train and validate the model on your machine:
     python main.py
 
 ### Technical Report
-The implementation and reluts can be viewed simultaneously in the [Traffic_Sign_CLassifier.ipynb
+The implementation and results can be viewed simultaneously in the [Traffic_Sign_CLassifier.ipynb
 iPython notebook](https://github.com/alexhagiopol/multiscale_CNN_classifier/blob/master/Traffic_Sign_Classifier.ipynb)
    
 
 #### Dataset Summary
 The GTSRB dataset contains 51839 total images, each annotated with one of 43 sign classes. Each image is a cropped traffic sign
-from frames in a vehicle dashcam. The dataset contains images that often blurry, too dark, or captured from
+from frames in a vehicle dashcam. The dataset contains images that are often blurry, too dark, or captured from
 challenging view angles. For this project, the dataset is divided into 34799 training examples, 4410 validation 
 examples, and 12630 testing examples. A sample of raw images in the dataset is shown below:
 
@@ -103,7 +107,7 @@ as described in Vivek Yadav's [blog post](https://chatbotslife.com/german-sign-c
 The architecture contains three "stacks" consisting of two convolutional layers, one ReLU layer, one max pooling layer, and one dropout layer.
 Stack one feeds into stack two which feeds into stack three. As described by Sermanet and LeCun, the output of stacks 1, 2, and 3
 are combined into a single, flattened vector which is then connected to a fully connected layer, a dropout layer, a second
-fully connected layer, and a second dropout layer in that order. Finally, reglarization is performed. The model architecture is 
+fully connected layer, and a second dropout layer in that order. Finally, regularization is performed. The model architecture is 
 summarized below:
 
 | Layer         		| Description    	        					| 
@@ -137,14 +141,14 @@ summarized below:
 #### Training
 To train the model architecture above, I set up CUDA and cuDNN on my Ubuntu machine as described and
 trained using an NVIDIA GTX 980Ti. I used a batch size of 128, 0.0002 learning rate, 50% 
-dropout likelihood, and 10 epochs. After each epoch, I check if the accuracy achieved is the
-highest ever, and I save the model if so. This aloows me to keep the best weights configuration
+dropout likelihood, and 100 epochs. After each epoch, I check if the accuracy achieved is the
+highest ever, and I save the model if so. This allows me to keep the best weights configuration
 after each epoch. This training configuration takes about 1 hour on my GPU.
 
 #### Approach
 
 My highest validation accuracy is 99.1% and my test accuracy is 97.2%. These results are encouraging given that human performance is 98.8%.
-My solution approach was to first implement the unmodified LeNet architecture with which I was not able to achieve above 85% accuracy. 
+My solution's approach was to first implement the unmodified LeNet architecture with which I was not able to achieve above 85% accuracy. 
 Next, I implemented Sermanet & LeCun's 2011 paper on my own. I improved that architecture by adding dropoout which was developed 3 years after
 Sermanet and LeCun published their paper. I then searched the Internet for more optimized implementations to 
 push my accuracy higher. I saw Vivek Yadav's blog post where he suggests doubling the number of convolutional layers in addition to 
@@ -168,7 +172,7 @@ This accuracy is much lower than the accuracy on the test set of 97%. This indic
 dataset and does not properly generalize to German traffic signs in general. Future work includes investigating this overfitting
 and attempting to alleviate the issue with perhaps better data augmentation. One issue I see with the differences between
 the new images and the dataset images is that the new images represent the traffic signs with higher clarity and less blur than the
-GTSRB dataset. Perhaps additional preprocessing on new images could help achieve better results.
+GTSRB dataset. Perhaps additional preprocessing on new images could help achieve better results. It's important to note that the paper by Sermanet and LeCun makes no mention of testing images from outside the GTSRB dataset; it's likely that their implementaion faces similar issues with overfitting.
 
 #### Model Certainty
 
