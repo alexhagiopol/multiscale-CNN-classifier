@@ -35,8 +35,8 @@ Optional, but recommended on Ubuntu: Install support for NVIDIA GPU acceleration
 
 Clone the image_classifier repo:
 
-    git clone https://github.com/alexhagiopol/image_classifier
-    cd image_classifier
+    git clone https://github.com/alexhagiopol/multiscale_CNN_classifier
+    cd multiscale_CNN_classifier
 
 Download the [German Traffic Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset) with annotations in a Python Pickle format that is easy to work with:
         
