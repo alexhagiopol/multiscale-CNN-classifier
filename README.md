@@ -4,7 +4,7 @@
 
 #### Abstract
 This project uses Google TensorFlow to implement a convolutional neural network architecture created using concepts from [the LeNet 5 architecture](http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf) (LeCun, 1998),
-the [multi-scale network architecture](https://drive.google.com/open?id=0B_huqLwo5sS1RzVxMlFKV0RrSmc) (Sermanet, 2011), [the dropout method](https://drive.google.com/open?id=0B_huqLwo5sS1QXd3S0NJY2pNeFk) (Srivastava, 2014), and [regularization](http://www.deeplearningbook.org/contents/regularization.html). 
+the [multi-scale network architecture](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=6033589&casa_token=Nc46-nvO870AAAAA:HFhpeWnjMIfH75FUtxY2AI6BPmU3Xu_wvbXNSLvLwNGUi-JiwTNrTxwXOm4skPIn7yYyZ9HVlgMf&tag=1) (Sermanet, 2011), [the dropout method](https://www.jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf) (Srivastava, 2014), and [regularization](http://www.deeplearningbook.org/contents/regularization.html). 
 The classifier's performance is tested using the [German Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset) 
 which contains over 51000 image patches from automobile dashcams, each annotated with one of 43 traffic sign classes. This implementation achieves 99.1% validation 
 accuracy and 97.2% test accuracy on this dataset. These results are encouraging given that human performance on this dataset is 98.8% (Sermanet & LeCun, 2011). However, overfitting the
